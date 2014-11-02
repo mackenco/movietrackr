@@ -7,6 +7,7 @@ var gulp = require('gulp'),
   templateCache = require('gulp-angular-templatecache'),
   jshint = require('gulp-jshint');
 
+//@todo - add todos
 gulp.task('sass', function() {
   gulp.src('public/stylesheets/style.scss')
       .pipe(plumber())

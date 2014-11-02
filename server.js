@@ -4,7 +4,10 @@ var express = require('express'),
   cookieParser = require('cookie-parser'),
   bodyParser = require('body-parser'),
   mongoose = require('mongoose'),
-  bcrypt = require('bcryptjs');
+  bcrypt = require('bcryptjs'),
+  async = require('async'),
+  request = require('request'),
+  _ = require('lodash');
 
 var movieSchema = new mongoose.Schema({
   id: Number,
@@ -99,6 +102,7 @@ app.post('/api/movies', function(req, res, next) {
   var apiKey = '7f8fc174ebc84511d4db81d8133a5d68',
       movieName = encodeURIComponent(req.body.movieName);
 
+//@todo - refactor this to use q
   async.waterfall([
     function(callback) {
       request.get('http://api.themoviedb.org/3/search/movie?api_key=' + apiKey + '&query=' + movieName, function(error, response, body) {
