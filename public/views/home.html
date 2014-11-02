@@ -1,0 +1,41 @@
+<div class="jumbotron">
+  <div class="container">
+    <ul class="alphabet">
+      <li ng-repeat="char in alphabet">
+        <span ng-click="filterByAlphabet(char)">{{char}}</span>
+      </li>
+    </ul>
+    <ul class="genres">
+      <li ng-repeat="genre in genres">
+        <span ng-click="filterByGenre(genre)">{{genre}}</span>
+        </li>
+        <li id="clear" ng-show="selected">
+        <span ng-click="clear()">Clear</span>
+      </li>
+
+    </ul>
+  </div>
+</div>
+
+<div class="container">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      {{headingTitle}}
+      <div class="pull-right">
+        <input class="search" type="text" ng-model="query.name" placeholder="Search...">
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="row movie-list">
+        <div class="col-xs-4 col-md-3" ng-repeat="movie in movies | filter:query | orderBy:'rating':true">
+          <a href="/movies/{{movie._id}}">
+            <img class="img-rounded" ng-src="{{movie.poster}}" width="100%"/>
+          </a>
+          <div class="text-center">
+            <a href="/movies/{{movie._id}}">{{movie.name}}</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
