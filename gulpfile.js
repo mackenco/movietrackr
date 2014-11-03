@@ -42,7 +42,7 @@ gulp.task('compress', function() {
     'public/directives/*.js'  
     ])
     .pipe(concat('app.min.js'))
-    .pipe(uglify())
+    // .pipe(uglify())
     .pipe(gulp.dest('public'));
 });
 

@@ -1,0 +1,27 @@
+<div class="container">
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <div class="media">
+        <div class="pull-left">
+          <img class="media-object img-rounded" ng-src="{{movie.poster}}">
+          <div vlass="text-center" ng-show="!currentUser">
+            <a class="btn btn-block btn-primary" href="#/login">Login to Review</a>
+          </div>
+        </div>
+        <div class="media-body">
+          <h2 class="media-heading">
+            {{movie.title}}
+          </h2>
+          <h4>
+            {{movie.tagline}}
+          </h4>
+          <h4>
+            <span class="glyphicon glyphicon-calendar text-danger"></span>
+            {{movie.release_date | date:'mediumDate'}}
+          </h4>
+          <p>{{movie.overview}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
