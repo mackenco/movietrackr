@@ -107,21 +107,22 @@ app.post('/api/movies', function(req, res, next) {
     function(callback) {
       request.get('http://api.themoviedb.org/3/search/movie?api_key=' + apiKey + '&query=' + movieName, function(error, response, body) {
         if (error) return next(error);
-        if (body.results.length === 0) return res.send(404, { message: req.body.movieName + ' was not found.' });
-        var movieId = body.results[0].id;
-        callback(err, movieId);
+        var parsedBody= JSON.parse(body);
+        if (parsedBody.results.length === 0) return res.send(404, { message: req.body.movieName + ' was not found.' });
+        var movieId = parsedBody.results[0].id;
+        callback(error, movieId);
       });
     },
     function(movieId, callback) {
       request.get('http://api.themoviedb.org/3/movie/' + movieId + '?api_key=' + apiKey, function(error, response, body) {
         if (error) return next(error);
-        var movie = new Movie(body);
-        callback(err, movie);
+        var movie = new Movie(JSON.parse(body));
+        callback(error, movie);
       });
     },
     function(movie, callback) {
       var url = 'http://image.tmdb.org/t/p/w185' + movie.poster_path;
-      request({ url: url, encoding: null }, function(error, response, bnody) {
+      request({ url: url, encoding: null }, function(error, response, body) {
         movie.poster = 'data:' + response.headers['content-type'] + ';base64,' + body.toString('base64');
         callback(error, movie); 
       });
