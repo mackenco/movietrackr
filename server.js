@@ -7,7 +7,10 @@ var express = require('express'),
   bcrypt = require('bcryptjs'),
   async = require('async'),
   request = require('request'),
-  _ = require('lodash');
+  _ = require('lodash'),
+  session = require('express-session'),
+  passport = require('passport'),
+  LocalStrategy = require('passport-local').Strategy;
 
 var movieSchema = new mongoose.Schema({
   id: Number,
@@ -29,13 +32,9 @@ var movieSchema = new mongoose.Schema({
   runtime: Number,
   spoken_languages: [{ name: String }],
   status: String,
-  subscribers: [{
-    type: mongoose.Schema.Types.ObjectId, ref: 'User'
-  }],
   tagline: String,
   title: String
 });
-
 
 var userSchema = new mongoose.Schema({
   email: { type: String, unique: true },
@@ -65,6 +64,33 @@ userSchema.methods.comparePassword = function(candidatePassword, cb) {
 var User = mongoose.model('User', userSchema);
 var Movie = mongoose.model('Movie', movieSchema);
 
+passport.serializeUser(function(user, done) {
+  done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+  User.findById(id, function(err, user) {
+    done(err, user);
+  });
+});
+
+passport.use(new LocalStrategy({ usernameField: 'email' }, function(email, password, done) {
+  User.findOne({ email: email }, function(err, user) {
+    if (err) return done(err);
+    if (!user) return done(null, false);
+    user.comparePassword(password, function(err, isMatch) {
+      if (err) return done(err);
+      if (isMatch) return done(null, user);
+      return done(null, false);
+    });
+  });
+}));
+
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) next();
+  else res.send(401);
+}
+
 mongoose.connect('localhost');
 
 var app = express();
@@ -74,6 +100,9 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(cookieParser());
+app.use(session({ secret: 'keyboard cat' }));
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/api/movies', function(req, res, next) {
@@ -137,6 +166,32 @@ app.post('/api/movies', function(req, res, next) {
         res.send(200);
       });
     });
+});
+
+app.post('/api/login', passport.authenticate('local'), function(req, res) {
+  res.cookie('user', JSON.stringify(req.user));
+  res.send(req.user);
+});
+
+app.post('/api/signup', function(req, res, next) {
+  var user = new User({
+    email: req.body.email,
+    password: req.body.password
+  });
+  user.save(function(err) {
+    if (err) return next(err);
+    res.send(200);
+  });
+});
+
+app.get('/api/logout', function(req, res, next) {
+  req.logout();
+  res.send(200);
+});
+
+app.use(function(req, res, next) {
+  if (req.user) res.cookie('user', JSON.stringify(req.user));
+  next();
 });
 
 app.get('*', function(req, res) {
