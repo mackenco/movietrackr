@@ -41,6 +41,15 @@ var userSchema = new mongoose.Schema({
   password: String
 });
 
+var reviewSchema = new mongoose.Schema({
+  id: Number,
+  rating: Number,
+  body: String,
+  venue: String,
+  movie_id: Number,
+  reviewer_id: Number
+});
+
 userSchema.pre('save', function(next) {
   var user = this;
   if (!user.isModified('password')) return next();
@@ -63,6 +72,7 @@ userSchema.methods.comparePassword = function(candidatePassword, cb) {
 
 var User = mongoose.model('User', userSchema);
 var Movie = mongoose.model('Movie', movieSchema);
+var Review = mongoose.model('Review', reviewSchema);
 
 passport.serializeUser(function(user, done) {
   done(null, user.id);
@@ -166,6 +176,20 @@ app.post('/api/movies', function(req, res, next) {
         res.send(200);
       });
     });
+});
+
+app.post('/api/review', ensureAuthenticated, function(req, res, next) {
+  var review = new Review({
+    rating: req.body.rating,
+    text: req.body.text,
+    venue: req.body.venue,
+    movie_id: req.body.movieId,
+    reviewer_id: req.user.id 
+  });
+  review.save(function(err) {
+    if (err) return next(err);
+    res.send(200);
+  });
 });
 
 app.post('/api/login', passport.authenticate('local'), function(req, res) {
