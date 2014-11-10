@@ -46,15 +46,27 @@
 
           <div class="form-group" 
             ng-class="{ 'has-success' : reviewForm.review.$valid && reviewForm.review.$dirty, 'has-error' : reviewForm.review.$invalid && reviewForm.review.$dirty }">
-            <textarea class="form-control" name="review" ng-model="review" placeholder="Review" required>
+            <textarea class="form-control" name="review" ng-model="review" placeholder="Review" required></textarea>
               
             <div class="help-block text-danger" ng-if="reviewForm.review.$dirty" ng-messages="reviewForm.review.$error">
               <div ng-message="required">Review is required.</div>
             </div>
           </div>
+          
+          <div class="form-group"
+            ng-class="{ 'has-success' : reviewForm.venue.$valid && reviewForm.venue.$dirty, 'has-error' : reviewForm.venue.$invalid && reviewForm.venue.$dirty }">
+            <select ng-model="venue" name="venue" class="form-control" ng-options="v for v in venues" required>
+              <option value="">Select Venue</option>
+            </select>
 
-
-
+            <div class="help-block text-danger" ng-if="reviewForm.venue.$dirty" ng-messages="reviewForm.venue.$error">
+              <div ng-message="required">Venue is required.</div>
+            </div>
+          </div>
+          
+            <button ng-click="toggleReview()" class="btn btn-block btn-success">
+              Post Review 
+            </button>
 
   </div>
 </div>
