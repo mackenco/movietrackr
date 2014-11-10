@@ -4,7 +4,12 @@
       <div class="media">
         <div class="pull-left">
           <img class="media-object img-rounded" ng-src="{{movie.poster}}">
-          <div vlass="text-center" ng-show="!currentUser">
+          <div class="text-center" ng-if="currentUser">
+            <button ng-click="toggleReview()" class="btn btn-block btn-success">
+              <span class="glyphicon glyphicon-plus"></span> Review
+            </button>
+          </div>
+          <div class="text-center" ng-show="!currentUser">
             <a class="btn btn-block btn-primary" href="#/login">Login to Review</a>
           </div>
         </div>
@@ -23,5 +28,33 @@
         </div>
       </div>
     </div>
+    <div class="media">
+      <div class="media-body">
+        <form class="form" method="post" ng-submit="reviewMovie()" name="reviewForm">
+          
+          <div class="form-group" 
+            ng-class="{ 'has-success' : reviewForm.rating.$valid && reviewForm.rating.$dirty, 'has-error' : reviewForm.rating.$invalid && reviewForm.rating.$dirty }">
+            <input class="form-control" type="number" min="1" max="5" name="rating" ng-model="rating" placeholder="Rating" required autofocus>
+
+            <div class="help-block text-danger" ng-if="reviewForm.rating.$dirty" ng-messages="reviewForm.rating.$error">
+              <div ng-message="required">Rating is required.</div>
+              <div ng-message="min">Minimum rating is 1.</div>
+              <div ng-message="max">Maximum rating is 5.</div>
+            </div>
+          </div>
+          
+
+          <div class="form-group" 
+            ng-class="{ 'has-success' : reviewForm.review.$valid && reviewForm.review.$dirty, 'has-error' : reviewForm.review.$invalid && reviewForm.review.$dirty }">
+            <textarea class="form-control" name="review" ng-model="review" placeholder="Review" required>
+              
+            <div class="help-block text-danger" ng-if="reviewForm.review.$dirty" ng-messages="reviewForm.review.$error">
+              <div ng-message="required">Review is required.</div>
+            </div>
+          </div>
+
+
+
+
   </div>
 </div>

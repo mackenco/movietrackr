@@ -22,7 +22,7 @@
            <div class="form-group"
                 ng-class="{ 'has-success' : signupForm.password.$valid && signupForm.password.$dirty, 'has-error' : signupForm.password.$invalid && signupForm.password.$dirty } ">
             <input class="form-control input-lg" type="password" name="password" ng-model="password" placeholder="Password" required>
-            <div class="help-block texxt-danger" ng-if="signupForm.password.$dirty" ng-messages="signupForm.password.$error">
+            <div class="help-block text-danger" ng-if="signupForm.password.$dirty" ng-messages="signupForm.password.$error">
               <div ng-message="required">Password is required.</div>
             </div>
           </div>
